@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "outFile": "./dist/index.js",
+    "target": "esnext",
+    "esModuleInterop": true,
+    "strict": true,
+    "allowJs": true,
+    "declaration": true,
+    "moduleResolution": "Node",
+    "module": "System"
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["./src/**/*"]
+}
