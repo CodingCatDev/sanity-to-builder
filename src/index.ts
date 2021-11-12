@@ -1,6 +1,7 @@
-import { getBuilderClient, getSanityClient } from './config';
+import { getBuilderAdmin, getSanityClient, getBuilderClient } from './config';
 import groq from 'groq';
-const builder = getBuilderClient();
+const builderAdmin = getBuilderAdmin();
+const builderClient = getBuilderClient();
 const sanity = getSanityClient();
 
 export const getAllTypes = async (list: string[], include = true) => {
@@ -70,7 +71,7 @@ export const createModels = async (models: string[]) => {
     const fields = getFields(modelRef);
     console.log(JSON.stringify(fields));
     chain.push(
-      builder.chain.mutation
+      builderAdmin.chain.mutation
         .addModel({
           body: {
             defaultQuery: [],
@@ -105,18 +106,31 @@ export const createModels = async (models: string[]) => {
 };
 
 export const getModels = async () => {
-  const models = await builder.query({
+  const models = await builderAdmin.query({
     models: { id: true, name: true, kind: true, fields: true },
   });
   return models.data?.models;
 };
 
 (async () => {
-  // Get all types from Sanity
-  const models: string[] = await getAllTypes(
-    ['system', 'kv', 'sanity', 'workflow', 'pluginSecrets'],
-    false
-  );
+  // // Get all types from Sanity
+  // const models: string[] = await getAllTypes(
+  //   ['system', 'kv', 'sanity', 'workflow', 'pluginSecrets'],
+  //   false
+  // );
 
-  await createModels(models);
+  // await createModels(models);
+  const res = await builderClient
+    .get('author', {
+      options: {
+        noTargeting: true,
+        noCache: true,
+        preview: true,
+        cachebust: true,
+      },
+      preview: true,
+      cachebust: true,
+    })
+    .toPromise();
+  console.log(res);
 })();
