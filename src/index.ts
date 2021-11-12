@@ -1,17 +1,68 @@
-import { getBuilderAdmin, getSanityClient, getBuilderClient } from './config';
+import {
+  getBuilderAdmin,
+  getSanityClient,
+  getBuilderClient,
+  deleteBuilder,
+  postBuilder,
+  getAllBuilder,
+} from './config';
 import groq from 'groq';
 const builderAdmin = getBuilderAdmin();
 const builderClient = getBuilderClient();
 const sanity = getSanityClient();
 
-export const getAllTypes = async (list: string[], include = true) => {
+export const pushAllModelData = async ({
+  groqStatement,
+}: {
+  groqStatement: string;
+}) => {
+  const modelData = await sanity.fetch(groq`${groqStatement}`);
+
+  for (const d of modelData) {
+    console.log('Adding Model: ', d._type);
+    const res = await postBuilder({
+      model: d._type,
+      body: {
+        name: d._id,
+        data: {
+          ...d,
+        },
+      },
+    });
+    console.log(JSON.stringify(res));
+  }
+};
+
+export const deleteAllModelData = async (models: string[]) => {
+  for (const m of models) {
+    console.log('Finding Builder Models for: ', m);
+    const builderModels = await getAllBuilder({ model: m });
+    if (!builderModels?.results) {
+      console.log('No Items for model found.');
+      continue;
+    }
+    for (const bModel of builderModels.results) {
+      console.log('deleting: ', bModel.modelId, bModel.id);
+      const result = await deleteBuilder({
+        model: bModel.modelId,
+        id: bModel.id,
+      });
+      console.log('Result', JSON.stringify(result));
+    }
+  }
+};
+
+export const createGroqSelectAllTypes = (list: string[], include = true) => {
   let match = '';
   for (const [i, v] of list.entries()) {
     match += `_type match "${v}*" ${i != list.length - 1 ? ' || ' : ''}`;
   }
-  const models = await sanity.fetch(
-    groq`*[${include ? '' : '!('}${match}${include ? '' : ')'}]._type`
-  );
+  return `*[${include ? '' : '!('}${match}${include ? '' : ')'}]`;
+};
+
+export const getAllTypes = async (list: string[], include = true) => {
+  const groqSelect = createGroqSelectAllTypes(list, include);
+  const models = await sanity.fetch(groq`${groqSelect}._type`);
   if (!models || Object.keys(models).length === 0) {
     return [];
   }
@@ -69,7 +120,6 @@ export const createModels = async (models: string[]) => {
     //Get Each types fields
     const modelRef = await getSingleDocument(m);
     const fields = getFields(modelRef);
-    console.log(JSON.stringify(fields));
     chain.push(
       builderAdmin.chain.mutation
         .addModel({
@@ -113,24 +163,26 @@ export const getModels = async () => {
 };
 
 (async () => {
-  // // Get all types from Sanity
-  // const models: string[] = await getAllTypes(
-  //   ['system', 'kv', 'sanity', 'workflow', 'pluginSecrets'],
-  //   false
-  // );
-
+  // Get all types from Sanity
+  const models: string[] = await getAllTypes(
+    ['system', 'kv', 'sanity', 'workflow', 'pluginSecrets'],
+    false
+  );
+  // Use those types to create Models in Builder
   // await createModels(models);
-  const res = await builderClient
-    .get('author', {
-      options: {
-        noTargeting: true,
-        noCache: true,
-        preview: true,
-        cachebust: true,
-      },
-      preview: true,
-      cachebust: true,
-    })
-    .toPromise();
-  console.log(res);
+
+  //Delete all model data for each type
+  await deleteAllModelData(models);
+
+  // Add new data from Sanity into Builder
+  const groqSelect = createGroqSelectAllTypes(
+    ['system', 'kv', 'sanity', 'workflow', 'pluginSecrets'],
+    false
+  );
+  pushAllModelData({
+    groqStatement: `${groqSelect}{
+    ...,
+  }
+  `,
+  });
 })();
