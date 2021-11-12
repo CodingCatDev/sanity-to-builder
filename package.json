@@ -26,14 +26,17 @@
   "homepage": "https://github.com/CodingCatDev/sanity-to-builder#readme",
   "dependencies": {
     "@builder.io/admin-sdk": "^0.0.4",
+    "@builder.io/sdk": "^1.1.23",
     "@sanity/client": "^2.21.10",
     "dotenv": "^10.0.0",
-    "groq": "^2.15.0"
+    "groq": "^2.15.0",
+    "node-fetch": "^2.6.6"
   },
   "devDependencies": {
+    "@types/node-fetch": "^3.0.3",
     "nodemon": "^2.0.15",
     "prettier": "^2.2.1",
-    "ts-node": "^10.4.0",
-    "rimraf": "^2.6.3"
+    "rimraf": "^2.6.3",
+    "ts-node": "^10.4.0"
   }
 }
