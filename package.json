@@ -29,7 +29,10 @@
     "@builder.io/sdk": "^1.1.23",
     "@sanity/client": "^2.21.10",
     "dotenv": "^10.0.0",
+    "firebase": "^9.6.1",
     "groq": "^2.15.0",
+    "markdown-it": "^12.3.0",
+    "markdown-it-prism": "^2.2.1",
     "node-fetch": "^2.6.6"
   },
   "devDependencies": {

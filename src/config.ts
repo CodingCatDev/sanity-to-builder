@@ -62,7 +62,7 @@ export const postBuilder = async ({
       Authorization: `Bearer ${process.env.BUILDER_PRIVATE_KEY}`,
     },
   });
-  return response.json();
+  return await response.json();
 };
 
 export const patchBuilder = async ({
