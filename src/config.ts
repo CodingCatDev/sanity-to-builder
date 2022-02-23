@@ -129,9 +129,21 @@ export const deleteBuilder = async ({
   );
   return response.json();
 };
-export const getAllBuilder = async ({ model }: { model: string }) => {
+export const getAllBuilder = async ({
+  model,
+  includeUnpublished = true,
+  limit = 1000,
+  published,
+}: {
+  model: string;
+  includeUnpublished?: boolean;
+  limit?: number;
+  published?: 'published' | 'archived' | 'draft';
+}) => {
   const response = await fetch(
-    `https://builder.io/api/v2/content/${model}?apiKey=${process.env.BUILDER_KEY}&preview=true&noCache=true&cachebust=true&includeUnpublished=true`,
+    `https://builder.io/api/v2/content/${model}?apiKey=${process.env.BUILDER_KEY}` +
+      `&preview=true&noCache=true&cachebust=true&includeUnpublished=${includeUnpublished}&limit=${limit}` +
+      (published ? `&query.published=${published}` : ''),
     {
       method: 'get',
       headers: {

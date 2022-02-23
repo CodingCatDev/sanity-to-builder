@@ -1,3 +1,4 @@
+import { getPodcastBlocks } from './templates/podcast';
 import {
   getBuilderAdmin,
   getSanityClient,
@@ -12,6 +13,11 @@ const builderClient = getBuilderClient();
 const sanity = getSanityClient();
 
 import { Timestamp } from 'firebase/firestore';
+import {
+  CodingCatBuilderContent,
+  CodingCatBuilderContentPodcast,
+  PodcastData,
+} from '../models/builder';
 
 var MarkdownIt = require('markdown-it'),
   md = new MarkdownIt();
@@ -35,13 +41,17 @@ export enum PostType {
 
 export const getSanityByType = async ({ type }: { type: PostType }) => {
   return await sanity.fetch(
-    groq`*[!(_id in path("drafts.**")) && _type == '${type}'] | order(publishedAt asc)`
+    groq`*[!(_id in path("drafts.**")) && _type == '${type}'] | order(publishedAt desc)`
   );
 };
 
-(async () => {
+export const convertDataFromSanityToBuilder = async ({
+  types,
+}: {
+  types: [PostType];
+}) => {
   const posts = [];
-  for (const type of [PostType.tutorial]) {
+  for (const type of types) {
     const typeData = await getSanityByType({ type });
     posts.push(...typeData);
   }
@@ -49,9 +59,9 @@ export const getSanityByType = async ({ type }: { type: PostType }) => {
   // Make builder from sanity
   for (const post of posts) {
     console.log(post.title);
-    const builderPost = {
-      // createdBy: "HYxMkZFRmMTuS5LD6DoM9GlsuXV2",
-      // createdDate: 1639103686898,
+    const builderPost:
+      | CodingCatBuilderContent
+      | CodingCatBuilderContentPodcast = {
       data: {
         page: {
           authors: [
@@ -71,53 +81,6 @@ export const getSanityByType = async ({ type }: { type: PostType }) => {
           frameworks: [],
           title: post.title,
         },
-        title: post.title,
-        blocks: [
-          {
-            '@type': '@builder.io/sdk:Element',
-            '@version': 2,
-            id: 'builder-62ac4f6c34c14ebe892352f609715a87',
-            component: {
-              name: 'Custom Code',
-              options: {
-                code: md.render(post.content ? post.content : ''),
-                scriptsClientOnly: true,
-              },
-            },
-            responsiveStyles: {
-              large: {
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                flexShrink: '0',
-                boxSizing: 'border-box',
-                marginTop: '20px',
-              },
-            },
-          },
-          {
-            id: 'builder-pixel-c2kbne5e9ir',
-            '@type': '@builder.io/sdk:Element',
-            tagName: 'img',
-            properties: {
-              src: 'https://cdn.builder.io/api/v1/pixel?apiKey=303fa35cceca49e6ab548071602c8ebd',
-              role: 'presentation',
-              width: '0',
-              height: '0',
-            },
-            responsiveStyles: {
-              large: {
-                height: '0',
-                width: '0',
-                display: 'inline-block',
-                opacity: '0',
-                overflow: 'hidden',
-                pointerEvents: 'none',
-              },
-            },
-          },
-        ],
-        url: `/${post._type}/${post.slug.current}`,
         state: {
           deviceSize: 'large',
           location: {
@@ -125,20 +88,17 @@ export const getSanityByType = async ({ type }: { type: PostType }) => {
             query: {},
           },
         },
+        title: post.title,
+        url: `/${post._type}/${post.slug.current}`,
+        blocks: [],
       },
-      //   id: '74670e1ceab7451eb0b702baafa60d02',
-      //   lastUpdatedBy: 'HYxMkZFRmMTuS5LD6DoM9GlsuXV2',
       meta: {
         hasLinks: false,
         kind: 'page',
         needsHydration: false,
       },
-      //   modelId: '3346f48bd7cf4337aa99627827b24b4a',
-      name: post.title,
-      published: 'published',
-      startDate: post.publishedAt
-        ? new Date(post.publishedAt).getTime()
-        : new Date().getTime(),
+      name: `NAME: ${post.title}`,
+      published: 'draft',
       query: [
         {
           '@type': '@builder.io/core:Query',
@@ -147,14 +107,24 @@ export const getSanityByType = async ({ type }: { type: PostType }) => {
           value: `/${post._type}/${post.slug.current}`,
         },
       ],
-      //   testRatio: 1,
-      //   variations: {},
-      //   lastUpdated: 1639104360504,
-      //   screenshot:
-      //     'https://cdn.builder.io/api/v1/image/assets%2F303fa35cceca49e6ab548071602c8ebd%2F0f51543d0b444ea5b949ac1605ac5ab2',
-      //   rev: 'xxnkpz4c0ne',
     };
+
+    // Podcast
+    if (post._type == PostType.podcast) {
+      builderPost.data = {
+        ...builderPost.data,
+        episode: post?.episode ? post?.episode : 99,
+        season: post?.season ? post?.season : 99,
+        recordingDate: post.recordingDate
+          ? new Date(post.recordingDate).getTime()
+          : new Date().getTime(),
+        blocks: getPodcastBlocks({
+          content: md.render(post?.content ? post.content : ''),
+          youtube: post?.coverVideo?.url ? post?.coverVideo?.url : '',
+        }),
+      } as PodcastData;
+    }
+
     const res = await postBuilder({ model: post._type, body: builderPost });
-    // console.log(JSON.stringify(res));
   }
-})();
+};
