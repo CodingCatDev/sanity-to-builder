@@ -41,7 +41,7 @@ export enum PostType {
 
 export const getSanityByType = async ({ type }: { type: PostType }) => {
   return await sanity.fetch(
-    groq`*[!(_id in path("drafts.**")) && _type == '${type}'] | order(publishedAt desc)`
+    groq`*[!(_id in path("drafts.**")) && _type == '${type}'] | order(publishedAt asc)`
   );
 };
 
