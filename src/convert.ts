@@ -16,6 +16,7 @@ import { Timestamp } from 'firebase/firestore';
 import {
   CodingCatBuilderContent,
   CodingCatBuilderContentPodcast,
+  Data,
   PodcastData,
 } from '../models/builder';
 
@@ -48,7 +49,7 @@ export const getSanityByType = async ({ type }: { type: PostType }) => {
 export const convertDataFromSanityToBuilder = async ({
   types,
 }: {
-  types: [PostType];
+  types: PostType[];
 }) => {
   const posts = [];
   for (const type of types) {
@@ -110,19 +111,34 @@ export const convertDataFromSanityToBuilder = async ({
     };
 
     // Podcast
-    if (post._type == PostType.podcast) {
-      builderPost.data = {
-        ...builderPost.data,
-        episode: post?.episode ? post?.episode : 99,
-        season: post?.season ? post?.season : 99,
-        recordingDate: post.recordingDate
-          ? new Date(post.recordingDate).getTime()
-          : new Date().getTime(),
-        blocks: getPodcastBlocks({
-          content: md.render(post?.content ? post.content : ''),
-          youtube: post?.coverVideo?.url ? post?.coverVideo?.url : '',
-        }),
-      } as PodcastData;
+    switch (post._type) {
+      case PostType.podcast:
+        builderPost.data = {
+          ...builderPost.data,
+          episode: post?.episode ? post?.episode : 99,
+          season: post?.season ? post?.season : 99,
+          recordingDate: post.recordingDate
+            ? new Date(post.recordingDate).getTime()
+            : new Date().getTime(),
+          blocks: getPodcastBlocks({
+            content: md.render(post?.content ? post.content : ''),
+            youtube: post?.coverVideo?.url ? post?.coverVideo?.url : '',
+            coverPhoto: post.coverPhoto,
+          }),
+        } as PodcastData;
+        break;
+
+      default:
+        builderPost.data = {
+          ...builderPost.data,
+
+          blocks: getPodcastBlocks({
+            content: md.render(post?.content ? post.content : ''),
+            youtube: post?.coverVideo?.url ? post?.coverVideo?.url : '',
+            coverPhoto: post.coverPhoto,
+          }),
+        } as Data;
+        break;
     }
 
     const res = await postBuilder({ model: post._type, body: builderPost });

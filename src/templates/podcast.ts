@@ -1,19 +1,14 @@
-import { Block } from '../../models/builder';
+import { Block, CoverPhoto } from '../../models/builder';
 
-export const getPodcastBlocks = ({
-  content,
+const getCover = ({
   youtube,
+  coverPhoto,
 }: {
-  content: string;
   youtube: string;
-}): Block[] => [
-  {
-    '@type': '@builder.io/sdk:Element',
-    '@version': 2,
-    layerName: 'Podcast Template',
-    id: 'builder-1c9b67fe775a49779014dcc73771cc0a',
-    children: [
-      {
+  coverPhoto: CoverPhoto;
+}) =>
+  youtube
+    ? {
         '@type': '@builder.io/sdk:Element',
         '@version': 2,
         id: 'builder-d6c0b6a08fdc4c67bdd434b898ddaaff',
@@ -36,7 +31,49 @@ export const getPodcastBlocks = ({
             boxSizing: 'border-box',
           },
         },
-      },
+      }
+    : {
+        '@type': '@builder.io/sdk:Element',
+        '@version': 2,
+        id: 'builder-57115baa51984c1581328a083e70c6f7',
+        component: {
+          name: 'NextImage',
+          options: {
+            src: coverPhoto.public_id,
+            layout: 'responsive',
+            width: 1920,
+            height: 1080,
+            alt: 'An image description',
+            className: '',
+          },
+        },
+        responsiveStyles: {
+          large: {
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative',
+            flexShrink: '0',
+            boxSizing: 'border-box',
+          },
+        },
+      };
+
+export const getPodcastBlocks = ({
+  content,
+  youtube,
+  coverPhoto,
+}: {
+  content: string;
+  youtube: string;
+  coverPhoto: CoverPhoto;
+}): Block[] => [
+  {
+    '@type': '@builder.io/sdk:Element',
+    '@version': 2,
+    layerName: 'Podcast Template',
+    id: 'builder-1c9b67fe775a49779014dcc73771cc0a',
+    children: [
+      getCover({ youtube, coverPhoto }),
       {
         '@type': '@builder.io/sdk:Element',
         '@version': 2,
@@ -407,6 +444,8 @@ export const getPodcastBlocks = ({
             '@version': 2,
             layerName: 'Layout',
             id: 'builder-ad19d297a94b4e19ba8a98b8d508cd78',
+            class:
+              'grid grid-cols-1 gap-4 p-1 lg:p-10 2xl:grid-cols-sidebar 2xl:pl-10',
             children: [
               {
                 '@type': '@builder.io/sdk:Element',
@@ -441,18 +480,14 @@ export const getPodcastBlocks = ({
                     },
                   },
                 ],
-                responsiveStyles: {
-                  large: {
-                    maxWidth: '1200px',
-                    flexGrow: '1',
-                  },
-                },
               },
               {
                 '@type': '@builder.io/sdk:Element',
                 '@version': 2,
                 layerName: 'Right',
                 id: 'builder-26f420366cec4c38949b73ee1e13f1a2',
+                class:
+                  'grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1',
                 children: [
                   {
                     '@type': '@builder.io/sdk:Element',
@@ -578,25 +613,8 @@ export const getPodcastBlocks = ({
                     },
                   },
                 ],
-                responsiveStyles: {
-                  large: {
-                    maxWidth: '400px',
-                  },
-                  medium: {
-                    maxWidth: 'none',
-                  },
-                },
               },
             ],
-            responsiveStyles: {
-              large: {
-                display: 'flex',
-                flexDirection: 'row',
-              },
-              medium: {
-                flexDirection: 'column',
-              },
-            },
           },
         ],
         responsiveStyles: {

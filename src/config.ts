@@ -97,18 +97,22 @@ export const putBuilder = async ({
   id: string;
   body: object;
 }) => {
-  const response = await fetch(
-    `https://builder.io/api/v1/write/${model}/${id}`,
-    {
-      method: 'put',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.BUILDER_PRIVATE_KEY}`,
-      },
-    }
-  );
-  return response.json();
+  try {
+    const response = await fetch(
+      `https://builder.io/api/v1/write/${model}/${id}`,
+      {
+        method: 'put',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.BUILDER_PRIVATE_KEY}`,
+        },
+      }
+    );
+    return response.json();
+  } catch (e) {
+    console.error(JSON.stringify(e));
+  }
 };
 
 export const deleteBuilder = async ({

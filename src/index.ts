@@ -2,6 +2,8 @@ import { convertDataFromSanityToBuilder, PostType } from './convert';
 import { archiveAllModelData } from './models';
 
 (async () => {
-  await archiveAllModelData(['podcast']);
-  await convertDataFromSanityToBuilder({ types: [PostType.podcast] });
+  await archiveAllModelData([PostType.lesson.toString()]);
+  await convertDataFromSanityToBuilder({
+    types: [PostType.lesson],
+  });
 })();

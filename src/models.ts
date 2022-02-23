@@ -68,7 +68,7 @@ export const archiveAllModelData = async (models: string[]) => {
       console.log('Found: ', builderModels.results.length);
     }
     for (const bModel of builderModels.results) {
-      console.log('archiving: ', bModel.modelId, bModel.id);
+      console.log('archiving: ', m, bModel.id);
       const result = await putBuilder({
         model: m,
         id: bModel.id,
