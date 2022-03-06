@@ -396,7 +396,7 @@ export const getTutorailBlocks = ({
                 layerName: 'Left',
                 tagName: 'article',
                 id: 'builder-c6e5144b027c4ed8821e87462e1e6c61',
-                class: 'article-content',
+                class: 'article-content min-w-0 max-w-full',
                 children: [
                   {
                     '@type': '@builder.io/sdk:Element',
@@ -430,7 +430,7 @@ export const getTutorailBlocks = ({
                 layerName: 'Right',
                 id: 'builder-26f420366cec4c38949b73ee1e13f1a2',
                 class:
-                  'grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1',
+                  'grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1 min-w-0 max-w-full',
                 children: [
                   {
                     '@type': '@builder.io/sdk:Element',
@@ -547,26 +547,5 @@ export const getTutorailBlocks = ({
         },
       },
     ],
-  },
-  {
-    id: 'builder-pixel-6ogel20pn3k',
-    '@type': '@builder.io/sdk:Element',
-    tagName: 'img',
-    properties: {
-      src: 'https://cdn.builder.io/api/v1/pixel?apiKey=303fa35cceca49e6ab548071602c8ebd',
-      role: 'presentation',
-      width: '0',
-      height: '0',
-    },
-    responsiveStyles: {
-      large: {
-        height: '0',
-        width: '0',
-        display: 'inline-block',
-        opacity: '0',
-        overflow: 'hidden',
-        pointerEvents: 'none',
-      },
-    },
   },
 ];
