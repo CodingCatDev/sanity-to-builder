@@ -63,7 +63,7 @@ export const postBuilder = async ({
         Authorization: `Bearer ${process.env.BUILDER_PRIVATE_KEY}`,
       },
     });
-    if (!response.ok) {
+    if (response.ok) {
       return await response.json();
     }
   } catch (e) {
@@ -92,7 +92,7 @@ export const patchBuilder = async ({
         },
       }
     );
-    if (!response.ok) {
+    if (response.ok) {
       return response.json();
     }
   } catch (e) {
@@ -121,7 +121,7 @@ export const putBuilder = async ({
         },
       }
     );
-    if (!response.ok) {
+    if (response.ok) {
       return response.json();
     }
   } catch (e) {
@@ -146,7 +146,7 @@ export const deleteBuilder = async ({
         },
       }
     );
-    if (!response.ok) {
+    if (response.ok) {
       return response.json();
     }
   } catch (e) {
@@ -177,7 +177,7 @@ export const getAllBuilder = async ({
         },
       }
     );
-    if (!response.ok) {
+    if (response.ok) {
       return response.json();
     }
   } catch (e) {
@@ -202,7 +202,7 @@ export const getBuilder = async ({
         },
       }
     );
-    if (!response.ok) {
+    if (response.ok) {
       return response.json();
     }
   } catch (e) {

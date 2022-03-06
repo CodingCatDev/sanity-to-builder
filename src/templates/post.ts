@@ -72,7 +72,7 @@ export const getPostBlocks = ({
                     component: {
                       name: 'NextLink',
                       options: {
-                        href: '/tutorials',
+                        href: '/blog',
                       },
                     },
                     children: [
@@ -90,7 +90,7 @@ export const getPostBlocks = ({
                             component: {
                               name: 'Core:Button',
                               options: {
-                                text: 'back to Tutorials',
+                                text: 'back to Blog',
                               },
                             },
                           },

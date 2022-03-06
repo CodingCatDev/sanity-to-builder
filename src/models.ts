@@ -78,7 +78,7 @@ export const archiveAllModelData = async (models: string[]) => {
         },
       });
       console.log('Result', JSON.stringify(result));
-      await sleep(5000);
+      await sleep(1000);
     }
   }
 };
