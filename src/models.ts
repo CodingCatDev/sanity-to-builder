@@ -8,6 +8,7 @@ import {
   putBuilder,
 } from './config';
 import groq from 'groq';
+import { sleep } from './templates/general';
 const builderAdmin = getBuilderAdmin();
 const builderClient = getBuilderClient();
 const sanity = getSanityClient();
@@ -59,7 +60,7 @@ export const archiveAllModelData = async (models: string[]) => {
     const builderModels = await getAllBuilder({
       model: m,
       includeUnpublished: false,
-      published: 'draft',
+      published: 'published',
     });
     if (!builderModels?.results) {
       console.log('No Items for model found.');
@@ -77,6 +78,7 @@ export const archiveAllModelData = async (models: string[]) => {
         },
       });
       console.log('Result', JSON.stringify(result));
+      await sleep(5000);
     }
   }
 };

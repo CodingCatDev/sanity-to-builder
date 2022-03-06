@@ -1,7 +1,6 @@
-import { Block, CoverPhoto } from '../../models/builder';
+import { CoverPhoto, Block } from '../../models/builder';
 import { getCover } from './general';
-
-export const getPodcastBlocks = ({
+export const getLessonBlocks = ({
   content,
   youtube,
   coverPhoto,
@@ -61,50 +60,6 @@ export const getPodcastBlocks = ({
                       name: 'Text',
                       options: {
                         text: '<p>Enter some text...</p>',
-                      },
-                    },
-                  },
-                  {
-                    '@type': '@builder.io/sdk:Element',
-                    '@version': 2,
-                    id: 'builder-1d4f594022a042f09b25c43dcd084398',
-                    class: 'flex-shrink0',
-                    component: {
-                      name: 'NextLink',
-                      options: {
-                        href: '/podcasts',
-                      },
-                    },
-                    children: [
-                      {
-                        '@type': '@builder.io/sdk:Element',
-                        '@version': 2,
-                        id: 'builder-76800f64117a47428ad0e88919b2d964',
-                        class: 'flex-shrink-0',
-                        children: [
-                          {
-                            '@type': '@builder.io/sdk:Element',
-                            '@version': 2,
-                            id: 'builder-6510f6f3840840c399f824bf5b31d4f5',
-                            class: 'btn-secondary',
-                            component: {
-                              name: 'Core:Button',
-                              options: {
-                                text: 'back to Podcasts',
-                              },
-                            },
-                          },
-                        ],
-                      },
-                    ],
-                    responsiveStyles: {
-                      large: {
-                        display: 'flex',
-                        flexDirection: 'column',
-                        position: 'relative',
-                        flexShrink: '0',
-                        boxSizing: 'border-box',
-                        marginTop: '20px',
                       },
                     },
                   },
@@ -432,27 +387,27 @@ export const getPodcastBlocks = ({
                 class:
                   'grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1',
                 children: [
-                  {
-                    '@type': '@builder.io/sdk:Element',
-                    '@version': 2,
-                    id: 'builder-67bf7708306745b0937af4f00b067c67',
-                    component: {
-                      name: 'SponsorCards',
-                      options: {
-                        sponsors: [
-                          {
-                            company: 'Builder.io',
-                            description: 'Builder.io Rocks',
-                            url: 'https://builder.io',
-                            coverPhoto: {
-                              public_id:
-                                'main-codingcatdev-photo/sponsors/assets_YJIGb4i01jvw0SRdL5Bt_368e8511120948e4a69d274bc6d594ea',
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  },
+                  // {
+                  //   '@type': '@builder.io/sdk:Element',
+                  //   '@version': 2,
+                  //   id: 'builder-67bf7708306745b0937af4f00b067c67',
+                  //   component: {
+                  //     name: 'SponsorCards',
+                  //     options: {
+                  //       sponsors: [
+                  //         {
+                  //           company: 'Builder.io',
+                  //           description: 'Builder.io Rocks',
+                  //           url: 'https://builder.io',
+                  //           coverPhoto: {
+                  //             public_id:
+                  //               'main-codingcatdev-photo/sponsors/assets_YJIGb4i01jvw0SRdL5Bt_368e8511120948e4a69d274bc6d594ea',
+                  //           },
+                  //         },
+                  //       ],
+                  //     },
+                  //   },
+                  // },
                   {
                     '@type': '@builder.io/sdk:Element',
                     '@version': 2,
@@ -551,6 +506,34 @@ export const getPodcastBlocks = ({
                     },
                     responsiveStyles: {
                       large: {
+                        marginTop: '20px',
+                      },
+                    },
+                  },
+                  {
+                    '@type': '@builder.io/sdk:Element',
+                    '@version': 2,
+                    bindings: {
+                      'component.options.courseData':
+                        'var _virtual_index=null===state||void 0===state?void 0:state.courseData;return _virtual_index',
+                    },
+                    code: {
+                      bindings: {
+                        'component.options.courseData': 'state?.courseData',
+                      },
+                    },
+                    id: 'builder-9980e74e5f9641b3980db6614d1f0b9c',
+                    component: {
+                      name: 'CourseSections',
+                      options: {},
+                    },
+                    responsiveStyles: {
+                      large: {
+                        display: 'flex',
+                        flexDirection: 'column',
+                        position: 'relative',
+                        flexShrink: '0',
+                        boxSizing: 'border-box',
                         marginTop: '20px',
                       },
                     },

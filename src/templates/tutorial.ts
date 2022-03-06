@@ -1,7 +1,7 @@
 import { Block, CoverPhoto } from '../../models/builder';
 import { getCover } from './general';
 
-export const getPodcastBlocks = ({
+export const getTutorailBlocks = ({
   content,
   youtube,
   coverPhoto,
@@ -72,7 +72,7 @@ export const getPodcastBlocks = ({
                     component: {
                       name: 'NextLink',
                       options: {
-                        href: '/podcasts',
+                        href: '/tutorials',
                       },
                     },
                     children: [
@@ -90,7 +90,7 @@ export const getPodcastBlocks = ({
                             component: {
                               name: 'Core:Button',
                               options: {
-                                text: 'back to Podcasts',
+                                text: 'back to Tutorials',
                               },
                             },
                           },
@@ -432,27 +432,6 @@ export const getPodcastBlocks = ({
                 class:
                   'grid content-start grid-cols-1 row-start-2 gap-4 2xl:col-start-2 2xl:row-start-1',
                 children: [
-                  {
-                    '@type': '@builder.io/sdk:Element',
-                    '@version': 2,
-                    id: 'builder-67bf7708306745b0937af4f00b067c67',
-                    component: {
-                      name: 'SponsorCards',
-                      options: {
-                        sponsors: [
-                          {
-                            company: 'Builder.io',
-                            description: 'Builder.io Rocks',
-                            url: 'https://builder.io',
-                            coverPhoto: {
-                              public_id:
-                                'main-codingcatdev-photo/sponsors/assets_YJIGb4i01jvw0SRdL5Bt_368e8511120948e4a69d274bc6d594ea',
-                            },
-                          },
-                        ],
-                      },
-                    },
-                  },
                   {
                     '@type': '@builder.io/sdk:Element',
                     '@version': 2,

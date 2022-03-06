@@ -1,3 +1,5 @@
+import { getTutorailBlocks } from './templates/tutorial';
+import { getLessonBlocks } from './templates/lesson';
 import { getPodcastBlocks } from './templates/podcast';
 import {
   getBuilderAdmin,
@@ -19,6 +21,8 @@ import {
   Data,
   PodcastData,
 } from '../models/builder';
+import { sleep } from './templates/general';
+import { getPostBlocks } from './templates/post';
 
 var MarkdownIt = require('markdown-it'),
   md = new MarkdownIt();
@@ -99,7 +103,7 @@ export const convertDataFromSanityToBuilder = async ({
         needsHydration: false,
       },
       name: `NAME: ${post.title}`,
-      published: 'draft',
+      published: 'published',
       query: [
         {
           '@type': '@builder.io/core:Query',
@@ -128,11 +132,44 @@ export const convertDataFromSanityToBuilder = async ({
         } as PodcastData;
         break;
 
+      case PostType.lesson:
+        builderPost.data = {
+          ...builderPost.data,
+          blocks: getLessonBlocks({
+            content: md.render(post?.content ? post.content : ''),
+            youtube: post?.coverVideo?.url ? post?.coverVideo?.url : '',
+            coverPhoto: post.coverPhoto,
+          }),
+        } as PodcastData;
+        break;
+
+      case PostType.tutorial:
+        builderPost.data = {
+          ...builderPost.data,
+          blocks: getTutorailBlocks({
+            content: md.render(post?.content ? post.content : ''),
+            youtube: post?.coverVideo?.url ? post?.coverVideo?.url : '',
+            coverPhoto: post.coverPhoto,
+          }),
+        } as PodcastData;
+        break;
+
+      case PostType.post:
+        builderPost.data = {
+          ...builderPost.data,
+          blocks: getPostBlocks({
+            content: md.render(post?.content ? post.content : ''),
+            youtube: post?.coverVideo?.url ? post?.coverVideo?.url : '',
+            coverPhoto: post.coverPhoto,
+          }),
+        } as PodcastData;
+        break;
+
       default:
         builderPost.data = {
           ...builderPost.data,
 
-          blocks: getPodcastBlocks({
+          blocks: getPostBlocks({
             content: md.render(post?.content ? post.content : ''),
             youtube: post?.coverVideo?.url ? post?.coverVideo?.url : '',
             coverPhoto: post.coverPhoto,
@@ -142,5 +179,6 @@ export const convertDataFromSanityToBuilder = async ({
     }
 
     const res = await postBuilder({ model: post._type, body: builderPost });
+    await sleep(1000);
   }
 };

@@ -54,15 +54,21 @@ export const postBuilder = async ({
   model: string;
   body: object;
 }) => {
-  const response = await fetch(`https://builder.io/api/v1/write/${model}`, {
-    method: 'post',
-    body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.BUILDER_PRIVATE_KEY}`,
-    },
-  });
-  return await response.json();
+  try {
+    const response = await fetch(`https://builder.io/api/v1/write/${model}`, {
+      method: 'post',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.BUILDER_PRIVATE_KEY}`,
+      },
+    });
+    if (!response.ok) {
+      return await response.json();
+    }
+  } catch (e) {
+    console.error(JSON.stringify(e));
+  }
 };
 
 export const patchBuilder = async ({
@@ -74,18 +80,24 @@ export const patchBuilder = async ({
   id: string;
   body: object;
 }) => {
-  const response = await fetch(
-    `https://builder.io/api/v1/write/${model}/${id}`,
-    {
-      method: 'patch',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.BUILDER_PRIVATE_KEY}`,
-      },
+  try {
+    const response = await fetch(
+      `https://builder.io/api/v1/write/${model}/${id}`,
+      {
+        method: 'patch',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.BUILDER_PRIVATE_KEY}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      return response.json();
     }
-  );
-  return response.json();
+  } catch (e) {
+    console.error(JSON.stringify(e));
+  }
 };
 
 export const putBuilder = async ({
@@ -109,7 +121,9 @@ export const putBuilder = async ({
         },
       }
     );
-    return response.json();
+    if (!response.ok) {
+      return response.json();
+    }
   } catch (e) {
     console.error(JSON.stringify(e));
   }
@@ -122,16 +136,22 @@ export const deleteBuilder = async ({
   model: string;
   id: string;
 }) => {
-  const response = await fetch(
-    `https://builder.io/api/v1/write/${model}/${id}`,
-    {
-      method: 'delete',
-      headers: {
-        Authorization: `Bearer ${process.env.BUILDER_PRIVATE_KEY}`,
-      },
+  try {
+    const response = await fetch(
+      `https://builder.io/api/v1/write/${model}/${id}`,
+      {
+        method: 'delete',
+        headers: {
+          Authorization: `Bearer ${process.env.BUILDER_PRIVATE_KEY}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      return response.json();
     }
-  );
-  return response.json();
+  } catch (e) {
+    console.error(JSON.stringify(e));
+  }
 };
 export const getAllBuilder = async ({
   model,
@@ -144,19 +164,25 @@ export const getAllBuilder = async ({
   limit?: number;
   published?: 'published' | 'archived' | 'draft';
 }) => {
-  const response = await fetch(
-    `https://builder.io/api/v2/content/${model}?apiKey=${process.env.BUILDER_KEY}` +
-      `&preview=true&noCache=true&cachebust=true&includeUnpublished=${includeUnpublished}&limit=${limit}` +
-      (published ? `&query.published=${published}` : ''),
-    {
-      method: 'get',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.BUILDER_KEY}`,
-      },
+  try {
+    const response = await fetch(
+      `https://builder.io/api/v2/content/${model}?apiKey=${process.env.BUILDER_KEY}` +
+        `&preview=true&noCache=true&cachebust=true&includeUnpublished=${includeUnpublished}&limit=${limit}` +
+        (published ? `&query.published=${published}` : ''),
+      {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.BUILDER_KEY}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      return response.json();
     }
-  );
-  return response.json();
+  } catch (e) {
+    console.error(JSON.stringify(e));
+  }
 };
 export const getBuilder = async ({
   model,
@@ -165,15 +191,21 @@ export const getBuilder = async ({
   model: string;
   id: string;
 }) => {
-  const response = await fetch(
-    `https://builder.io/api/v2/content/${model}/${id}?apiKey=${process.env.BUILDER_KEY}&preview=true&noCache=true&cachebust=true&includeUnpublished=true`,
-    {
-      method: 'get',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.BUILDER_KEY}`,
-      },
+  try {
+    const response = await fetch(
+      `https://builder.io/api/v2/content/${model}/${id}?apiKey=${process.env.BUILDER_KEY}&preview=true&noCache=true&cachebust=true&includeUnpublished=true`,
+      {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.BUILDER_KEY}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      return response.json();
     }
-  );
-  return response.json();
+  } catch (e) {
+    console.error(JSON.stringify(e));
+  }
 };
