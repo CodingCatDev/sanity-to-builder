@@ -7,6 +7,7 @@ import { createAdminApiClient } from '@builder.io/admin-sdk';
 import { builder } from '@builder.io/sdk';
 import SanityClientConstructor from '@sanity/client';
 const fetch = require('node-fetch');
+import { Client } from '@notionhq/client';
 
 export const getBuilderAdmin = () => {
   const privateKey = process.env.BUILDER_PRIVATE_KEY;
@@ -44,6 +45,17 @@ export const getSanityClient = () => {
     apiVersion: '2021-05-19',
     token: process.env.SANITY_API_TOKEN,
     useCdn: false,
+  });
+};
+
+export const getNotionClient = () => {
+  if (!process.env.NOTION_TOKEN) {
+    const error = 'Check Notion Keys, check .env';
+    console.error(JSON.stringify(error));
+    throw error;
+  }
+  return new Client({
+    auth: process.env.NOTION_TOKEN,
   });
 };
 
@@ -207,5 +219,106 @@ export const getBuilder = async ({
     }
   } catch (e) {
     console.error(JSON.stringify(e));
+  }
+};
+
+export const createFrameworkLanguageNotionPage = async ({
+  databaseId,
+  title,
+  slug,
+  excerpt,
+}: {
+  databaseId: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+}) => {
+  return await getNotionClient().pages.create({
+    parent: {
+      database_id: databaseId,
+    },
+    properties: {
+      title: {
+        title: [
+          {
+            text: {
+              content: title,
+            },
+          },
+        ],
+      },
+      slug: {
+        url: slug,
+      },
+      excerpt: {
+        rich_text: [
+          {
+            text: {
+              content: excerpt,
+            },
+          },
+        ],
+      },
+    },
+  });
+};
+
+export const createBuilderPostNotionPage = async ({
+  model,
+  databaseId,
+}: {
+  model: string;
+  databaseId: string;
+}) => {
+  const builderModel = await getAllBuilder({ model });
+
+  for (const m of builderModel.results) {
+    console.log(m.data?.page?.title);
+    console.log(m.data?.url);
+    await getNotionClient().pages.create({
+      parent: {
+        database_id: databaseId,
+      },
+      properties: {
+        title: {
+          title: [
+            {
+              text: {
+                content: m.data?.page?.title || 'Missing',
+              },
+            },
+          ],
+        },
+        slug: {
+          url: m.data?.url?.split('/').at(2)
+            ? m.data?.url?.split('/').at(2)
+            : m.data?.url || null,
+        },
+        excerpt: {
+          rich_text: [
+            {
+              text: {
+                content: m.data?.page?.excerpt || '',
+              },
+            },
+          ],
+        },
+        cover: {
+          url: m.data?.page?.coverPhoto?.url || null,
+        },
+        authors: {
+          relation: [
+            {
+              id: 'd3f8291f-8d55-4240-bcb5-831e68b4591c',
+            },
+          ],
+        },
+        published: {
+          select: {
+            name: 'published',
+          },
+        },
+      },
+    });
   }
 };
